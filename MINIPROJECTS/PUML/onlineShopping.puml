@@ -1,0 +1,55 @@
+@startuml
+
+actor User
+
+participant Main
+participant Customer
+participant InventoryManager
+participant ShoppingCart
+
+
+
+User -> Main: Start Application
+
+activate Main
+Main -> InventoryManager: Create InventoryManager instance
+Main -> Customer: Create Customer instance ("john_doe", "password")
+
+loop User Interaction
+    User -> Main: Choose option
+    activate Customer
+    Main -> Customer: Perform chosen action
+    alt Add Item to Cart
+      
+        Main -> ShoppingCart: Read product name to add to cart
+        activate ShoppingCart
+        ShoppingCart -> InventoryManager: Find product by name
+        InventoryManager --> ShoppingCart: ShoppingCart found / not found
+        ShoppingCart -> ShoppingCart: Add item to cart
+        deactivate ShoppingCart
+        Main <-- ShoppingCart: Item added to cart
+        
+    else Remove Item from Cart
+       
+        Main -> ShoppingCart: Read product name to remove from cart
+        activate ShoppingCart
+        ShoppingCart -> ShoppingCart: Remove item from cart
+        deactivate ShoppingCart
+        Main <-- ShoppingCart: Item removed from cart
+        
+    else View Cart
+        ShoppingCart --> Main: Cart items
+    else Process Order
+        ShoppingCart -> InventoryManager: Process order
+        InventoryManager --> ShoppingCart: Order processed
+        ShoppingCart -> ShoppingCart: Clear cart
+        Main <-- ShoppingCart: Order processed successfully
+        
+    end
+end
+
+User -> Main: Exit Application
+Main -> ShoppingCart: Close scanner
+deactivate Main
+
+@enduml

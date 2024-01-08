@@ -1,0 +1,70 @@
+@startuml
+
+actor User
+
+participant Main
+participant SchoolManagementSystem
+participant Course
+participant Student
+
+
+User -> Main: Start Application
+
+activate Main
+Main -> SchoolManagementSystem: Create SchoolManagementSystem instance
+
+loop User Interaction
+    User -> Main: Choose option
+    activate SchoolManagementSystem
+    Main -> SchoolManagementSystem: Perform chosen action
+    alt Enroll Student
+        Main -> SchoolManagementSystem: Enroll Student
+     
+        Main -> Course: Display Courses
+        SchoolManagementSystem -> Course: Display Courses
+     
+        Course -> Main: Display Course Info
+
+        Main -> Student: Create Student instance
+        Main -> Course: Find Course by Name
+        SchoolManagementSystem -> SchoolManagementSystem: Get Courses List
+        SchoolManagementSystem --> Main: Courses List
+        Course --> Main: Course Found / Not Found
+        alt Course Found
+            Main -> SchoolManagementSystem: Enroll Student in Course
+           
+            Main --> SchoolManagementSystem: Student Enrolled
+       
+            Main -> Course: Display Info
+            Course --> Main: Course Info
+           
+        else Course Not Found
+            Main --> Main: Display Error Message
+        end
+    else Display Courses
+        Main -> SchoolManagementSystem: Display Courses
+     
+        SchoolManagementSystem -> Course: Display Courses
+    
+        Course -> Main: Display Course Info
+        deactivate Main
+    else Display Teachers
+        Main -> SchoolManagementSystem: Display Teachers
+       
+        SchoolManagementSystem -> Teacher: Display Teachers
+        
+        Teacher --> Main: Teacher Info
+    else Display Students
+        Main -> SchoolManagementSystem: Display Students
+
+        SchoolManagementSystem -> Student: Display Students
+    
+        Student --> Main: Students List
+    end
+end
+
+User -> Main: Exit Application
+Main -> SchoolManagementSystem: Close SchoolManagementSystem
+deactivate Main
+
+@enduml

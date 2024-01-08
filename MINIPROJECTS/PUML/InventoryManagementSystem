@@ -1,0 +1,51 @@
+@startuml
+
+actor User
+
+participant Main
+participant Warehouse
+participant InventoryManager
+participant product
+
+
+User -> Main: Start Application
+
+activate Main
+Main -> Warehouse: Create Warehouse instance
+Main -> InventoryManager: Create InventoryManager instance
+Main -> product: Create product instance
+
+loop User Interaction
+    User -> Main: Choose option
+    activate InventoryManager
+    Main -> InventoryManager: Perform chosen action
+    alt Add Product
+        Main -> product: Read product details
+        activate product
+        product -> Warehouse: Add product
+        deactivate product
+        Main <-- Warehouse: Product added successfully
+    else Remove Product
+        Main -> product: Read product name to remove
+        activate product
+        product -> Warehouse: Remove product
+        deactivate product
+        Main <-- Warehouse: Product removed successfully
+    else Display Inventory
+        Warehouse -> Warehouse: Display inventory
+        Main <-- Warehouse: Displayed inventory
+    else Process Order
+        Main -> product: Read order details
+        activate product
+        product -> InventoryManager: Process order
+        InventoryManager -> Warehouse: Process order
+        deactivate product
+        Main <-- Warehouse: Order processed successfully
+    end
+end
+
+User -> Main: Exit Application
+Main -> product: Close product
+deactivate Main
+
+@enduml

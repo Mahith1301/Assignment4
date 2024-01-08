@@ -1,0 +1,58 @@
+@startuml
+
+
+actor User
+
+participant Main
+participant Reservation
+participant Room
+participant guest
+
+
+User -> Main: Start Application
+
+activate Main
+Main -> Reservation: Create reservation instance
+
+loop User Interaction
+    User -> Main: Choose option
+    activate Reservation
+    Main -> Reservation: Perform chosen action
+    alt Check Availability
+        Main -> Room: Read room number
+        activate Room
+        Room -> Reservation: Send room number
+        Reservation --> Room: Check room availability
+        Room --> Main: Display result
+        deactivate Room
+    else Book a Room
+        Main -> Room: Read room number
+        activate Room
+        Room -> Reservation: Send room number
+        Main -> guest: Read guest name
+        guest -> Reservation: Send guest name
+        Main -> guest: Read contact number
+        guest -> Reservation: Send contact number
+        Reservation --> Room: Book room
+        Room --> Main: Display booking result
+        deactivate Room
+    else Print Bill
+        Main -> Room: Read room number
+        activate Room
+        Room -> Reservation: Send room number
+        Reservation --> Room: Print bill
+       Room --> Main: Display bill
+        deactivate Room
+    end
+end
+
+User -> Main: Exit Application
+
+deactivate Main
+
+
+Main --> Reservation
+Main --> guest
+Reservation --> guest
+
+@enduml
